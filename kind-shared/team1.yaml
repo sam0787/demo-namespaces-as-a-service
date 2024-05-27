@@ -1,4 +1,15 @@
 applications:
+  applications:
+  shared-test:
+    project: default
+    additionalLabels:
+      owner: ned
+    source:
+      repoURL: 'https://github.com/sam0787/demo-namespaces-as-a-service'
+      path: config/sample-apps/namespace
+      targetRevision: HEAD
+    destination:
+      namespace: test
   # shared-test:
   #   project: default
   #   additionalLabels:
