@@ -37,8 +37,8 @@ spec:
             type: RuntimeDefault
         resources:
           requests:
-            memory: "8Gi"
-            cpu: "5"
+            memory: "64Mi"
+            cpu: "250m"
           limits:
-            memory: "8Gi"
-            cpu: "5"
+            memory: "128Mi"
+            cpu: "500m"
