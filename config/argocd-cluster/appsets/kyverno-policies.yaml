@@ -20,9 +20,9 @@ spec:
       - repoURL: https://github.com/nirmata/kyverno-policies
         targetRevision: HEAD
         path: pod-security/enforce
-      - repoURL: https://github.com/sam0787/demo-namespaces-as-a-service
+      - repoURL: https://github.com/sam0787/shared-cluster-configs.git
         targetRevision: HEAD
-        path: config/shared-cluster/policies/
+        path: shared-cluster/policies/
       destination:
         server: '{{server}}'
       syncPolicy:

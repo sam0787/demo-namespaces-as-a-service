@@ -17,9 +17,9 @@ spec:
     spec:
       project: "default"
       sources:
-      - repoURL: https://github.com/sam0787/demo-namespaces-as-a-service
+      - repoURL: https://github.com/sam0787/shared-cluster-configs.git
         targetRevision: HEAD
-        path: config/shared-cluster/roles/
+        path: shared-cluster/roles/
       destination:
         server: '{{server}}'
       syncPolicy:
