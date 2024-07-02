@@ -1,0 +1,117 @@
+{{- if eq .Values.virtualService.enabled true }}
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name:  {{ .Release.Name }}
+  namespace: {{ .Values.namespaceName }}
+  labels:
+    {{- include "pg-common.labels" . | nindent 4 }}
+spec:
+  hosts:
+  {{- range .Values.virtualService.domains.hyphenSeparated }}
+  - "{{ default $.Release.Name $.Values.virtualService.hostName }}-{{ $.Values.namespaceName }}.{{ . }}"
+  {{- end }}
+  {{- range .Values.virtualService.domains.dotSeparated }}
+  - "{{ default $.Release.Name $.Values.virtualService.hostName }}.{{ $.Values.namespaceName }}.{{ . }}"
+  {{- end }}
+  {{- range .Values.virtualService.domains.overrides }}
+  - "{{ . }}"
+  {{- end }}
+
+  gateways:
+  {{- if eq .Values.config.extraLabels.project "dummy" }}
+    {{- if eq .Values.config.extraLabels.environment "staging" }}
+  - {{ .Values.namespaceName }}-gateway
+  - {{ .Values.namespaceName }}-mec-gateway
+  - {{ .Values.namespaceName }}-pc-gateway
+    {{- end }}
+    {{- if eq .Values.config.extraLabels.environment "pt" }}
+  - platform-gateway
+  - rc-gateway
+    {{- end }}
+    {{- if eq .Values.config.extraLabels.environment "production" }}
+  - platform-gateway
+  - rc-gateway
+    {{- end }}
+  {{- else if eq .Values.config.extraLabels.project "My11Circle" }}
+    {{- if eq .Values.config.extraLabels.environment "staging" }}
+  - {{ .Values.namespaceName }}-gateway
+  - {{ .Values.namespaceName }}-mec-gateway
+    {{- end }}
+    {{- if or ( eq .Values.config.extraLabels.environment "pt" ) ( eq .Values.config.extraLabels.environment "production" ) }}
+  - mec-gateway
+  - platform-gateway
+    {{- end }}
+  {{- else if eq .Values.config.extraLabels.project "PlayCircle" }}
+    {{- if eq .Values.config.extraLabels.environment "staging" }}
+  - {{ .Values.namespaceName }}-gateway
+  - {{ .Values.namespaceName }}-pc-gateway
+    {{- end }}
+    {{- if eq .Values.config.extraLabels.environment "pt" }}
+  - pc-gateway
+  - platform-gateway
+    {{- end }}
+    {{- if eq .Values.config.extraLabels.environment "production" }}
+  - pc-gateway
+  - platform-gateway
+    {{- end }}
+  {{- else if eq .Values.config.extraLabels.project "EDS" }}
+    {{- if eq .Values.config.extraLabels.environment "staging" }}
+  - {{ .Values.namespaceName }}-gateway
+  - {{ .Values.namespaceName }}-mec-gateway
+    {{- end }}
+    {{- if eq .Values.config.extraLabels.environment "pt" }}
+  - eds-gateway
+  - eds-second-gateway
+    {{- end }}
+    {{- if eq .Values.config.extraLabels.environment "production" }}
+  - eds-gateway
+    {{- end }}
+  {{- else if eq .Values.config.extraLabels.project "Experimentation-Engine" }}
+    {{- if eq .Values.config.extraLabels.environment "staging" }}
+  - {{ .Values.namespaceName }}-ee-gateway
+    {{- end }}
+    {{- if eq .Values.config.extraLabels.environment "pt" }}
+  - ee-gateway
+    {{- end }}
+    {{- if eq .Values.config.extraLabels.environment "production" }}
+  - experimentation-engine-gateway
+    {{- end }}
+  {{- else if eq .Values.config.extraLabels.project "Risk-Rule-Engine" }}
+    {{- if eq .Values.config.extraLabels.environment "staging" }}
+  - {{ .Values.namespaceName }}-gateway
+    {{- end }}
+  {{- else if eq .Values.config.extraLabels.project "Platform" }}
+    {{- if eq .Values.config.extraLabels.environment "pt" }}
+  - platform-gateway
+    {{- else if eq .Values.config.extraLabels.environment "staging" }}
+  - {{ .Values.namespaceName }}-gateway
+    {{- end }}
+  {{- end }}
+  http:
+  {{- if eq (len .Values.virtualService.routes) 0 }}
+  - match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        host: {{ .Release.Name }}
+        port:
+          number: 80
+  {{- else }}
+  {{- range .Values.virtualService.routes }}
+  - match:
+    - uri:
+        prefix: {{ default "/" .path }}
+    route:
+    - destination:
+        host: {{ default $.Release.Name .host }}
+        port:
+          number: {{ default 80 .port }}
+  {{- end }}
+  {{- end }}
+  {{- with .Values.virtualService.corsPolicy }}
+    corsPolicy:
+      {{- toYaml . | nindent 6 }}
+  {{- end }}
+{{- end }}

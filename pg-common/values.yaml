@@ -1,0 +1,209 @@
+# Default values for a sample application
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+fullnameOverride: sample-application
+namespaceName: sample-namespace
+imagePullSecrets: []
+image:
+  repository: ""
+  pullPolicy: Always
+  tag: k8s
+
+virtualService:
+  enabled: true
+  hostname: ""
+  domains:
+    hyphenSeparated: []
+    # - fickle.dummy.com
+    dotSeparated:
+    - private.xyz
+    overrides: []
+  routes: []
+  #   - path: /foo # optional
+  #     host: sample-application # optional
+  #     port: 80 # optional
+  #   - path: /bar # optional
+  #     host: other-application # optional
+  #     port: 80 # optional
+  corsPolicy: {}
+      # allowOrigin:
+      # - "*"
+      # allowMethods:
+      # - OPTIONS
+      # - GET
+      # - PUT
+      # allowCredentials: false
+      # allowHeaders:
+      # - X-Foo-Bar
+      # maxAge: "24h"
+config:
+
+  timezone:
+    envVarEnabled: false
+    fileMountEnabled: false
+
+  zookeeper:
+    fileMountEnabled: true
+
+  extraEnv:
+    enabled: true
+    env:
+    - name: ENV
+      value: "k8s"
+    - name: ZK_URL
+      value: "zookeeper"
+
+  terminationGracePeriod:
+    enabled: false
+    seconds: 30
+
+  priorityClass:
+    enabled: false
+    name: "high-priority"
+
+  extraLabels:
+  #   component: api
+  #   team: Backend
+    project: dummy
+  #   businessUnit: dummy
+  #   billingUnit: dummy
+    environment: staging
+
+  heapDump:
+    enabled: false
+    pathOverride: ""
+
+  extraVolumes:
+    # You may use mount from configMap or secret as well
+    enabled: false
+    volumes:
+    - name: extra-volume-name
+      hostPath:
+        path: /path/to/the/file/on/host
+  extraVolumeMounts:
+    enabled: false
+    volumeMounts:
+    - name: extra-volume-name
+      mountPath: /path/to/the/mount/on/pod
+
+  istioSidecar:
+    enabled: false
+    deploymentAnnotations: {}
+
+replicaCount: 2
+
+deploymentStrategy:
+  type: RollingUpdate
+  rollingUpdateParams:
+    maxSurge: 25%
+    maxUnavailable: 0%
+
+resources:
+ # We usually recommend not to specify default resources and to leave this as a conscious
+ # choice for the user. This also increases chances charts run on environments with little
+ # resources, such as Minikube. If you do want to specify resources, uncomment the following
+ # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+ requests:
+   cpu: 250m
+   memory: 500Mi
+ limits:
+   cpu: 350m
+   memory: 700Mi
+
+hpa:
+  enabled: false
+  minReplicas: 2
+  maxReplicas: 4
+  behavior:
+    enabled: false
+  cpu:
+    targetAverageUtilization: 75
+  memory:
+    enabled: true
+    targetAverageValue: 500Mi
+
+service:
+  type: ClusterIP
+  port: 80
+  additionalPorts: []
+  annotations: {}
+
+additionalService:
+  enabled: false
+  nameSuffix: nlb
+  type: LoadBalancer
+  port: 80
+  additionalPorts: []
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-internal: "true"
+    service.beta.kubernetes.io/aws-load-balancer-type: nlb
+
+ports:
+  - name: http
+    containerPort: 8080
+    protocol: TCP
+
+# livenessProbe:
+#   initialDelaySeconds: 30
+#   periodSeconds: 1
+#   httpGet:
+#     path: /sample-application/sanity
+#     port: http
+
+# readinessProbe:
+#   initialDelaySeconds: 30
+#   periodSeconds: 1
+#   httpGet:
+#     path: /sample-application/health
+#     port: http
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name:
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+jmx:
+  enabled: false
+
+lifecycle:
+  enabled: false
+  hooks: {}
+
+serviceMonitor:
+  enabled: false
+  port: http
+  path: "/actuator/prometheus"
+
+ingress:
+  enabled: false
+  host: ""
+  annotations: {}
+  backendServiceOverride:
+    enabled: false
+    name: "" # don't override unless you know what you're doing for ingress ALB
+    port: "" # don't override unless you know what you're doing for ingress ALB
+
+pdb:
+  enabled: true

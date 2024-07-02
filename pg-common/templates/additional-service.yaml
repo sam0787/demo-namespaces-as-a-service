@@ -1,0 +1,28 @@
+{{- if eq .Values.additionalService.enabled true }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "pg-common.fullname" . }}-{{ .Values.additionalService.nameSuffix }}
+  namespace: {{ .Values.namespaceName }}
+  labels:
+    {{- include "pg-common.labels" . | nindent 4 }}
+  annotations:
+    {{- toYaml .Values.additionalService.annotations | nindent 4 }}
+spec:
+  type: {{ .Values.additionalService.type }}
+  ports:
+    - port: {{ .Values.additionalService.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  {{- if gt (len .Values.additionalService.additionalPorts) 0 }}
+    {{- range $additionalPort:= .Values.additionalService.additionalPorts }}
+    - port: {{ $additionalPort }}
+      targetPort: http-{{ $additionalPort }}
+      protocol: TCP
+      name: http-{{ $additionalPort }}
+    {{- end }}
+  {{- end }}
+  selector:
+    {{- include "pg-common.selectorLabels" . | nindent 4 }}
+{{- end }}

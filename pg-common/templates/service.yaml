@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "pg-common.fullname" . }}
+  namespace: {{ .Values.namespaceName }}
+  labels:
+    {{- include "pg-common.labels" . | nindent 4 }}
+  annotations:
+    {{- toYaml .Values.service.annotations | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  {{- if gt (len .Values.service.additionalPorts) 0 }}
+    {{- range $additionalPort:= .Values.service.additionalPorts }}
+    - port: {{ $additionalPort }}
+      targetPort: http-{{ $additionalPort }}
+      protocol: TCP
+      name: http-{{ $additionalPort }}
+    {{- end }}
+  {{- end }}
+  {{- if eq .Values.jmx.enabled true }}
+    - port: 9210
+      targetPort: jmx
+      protocol: TCP
+      name: jmx
+  {{- end }}
+  selector:
+    {{- include "pg-common.selectorLabels" . | nindent 4 }}
