@@ -1,0 +1,39 @@
+kind: ApplicationSet
+apiVersion: argoproj.io/v1alpha1
+metadata:
+  name: vpa-recommender
+  namespace: argocd
+spec:
+  generators:
+  - clusters:
+      selector:
+        matchLabels:
+          argocd.argoproj.io/secret-type: cluster
+  template: 
+    metadata:
+      name: 'cluster-{{name}}-vpa-recommender'
+      annotations:
+        argocd.argoproj.io/sync-wave: "3"
+    spec:
+      project: "default"
+      sources:
+      - repoURL: https://github.com/nirmata/demo-resource-optimizer.git
+        targetRevision: HEAD
+        path: config/vpa/
+      - repoURL: https://github.com/nirmata/demo-resource-optimizer.git
+        targetRevision: HEAD
+        path: config/kyverno/policies/
+      destination:
+        server: '{{server}}'
+      syncPolicy:
+        syncOptions:
+        - Replace=true
+        - CreateNamespace=true
+        automated:
+          selfHeal: true
+        retry:
+          limit: 30
+          backoff:
+            duration: 5s
+            factor: 2
+            maxDuration: 3m0s
