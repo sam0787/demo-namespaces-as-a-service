@@ -19,16 +19,16 @@ applications:
   #     targetRevision: HEAD
   #   destination:
   #     namespace: test
-  # shared-busybox:
-  #   project: default
-  #   additionalLabels:
-  #     owner: nancy    
-  #   source:
-  #     repoURL: 'https://github.com/sam0787/demo-namespaces-as-a-service' # Endpoint from where the app is created 
-  #     path: config/sample-apps/good-app
-  #     targetRevision: HEAD
-  #   destination:
-  #     namespace: test
+  shared-busybox:
+    project: default
+    additionalLabels:
+      owner: nancy    
+    source:
+      repoURL: 'https://github.com/sam0787/demo-namespaces-as-a-service' # Endpoint from where the app is created 
+      path: config/sample-apps/good-app
+      targetRevision: HEAD
+    destination:
+      namespace: test
   # shared-busybox2:
   #   project: default
   #   additionalLabels:
