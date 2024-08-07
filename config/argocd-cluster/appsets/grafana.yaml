@@ -1,42 +1,46 @@
 kind: ApplicationSet
 apiVersion: argoproj.io/v1alpha1
 metadata:
-  name: vpa-recommender
+  name: prometheus
   namespace: argocd
 spec:
   generators:
   - clusters:
       selector:
         matchLabels:
-          argocd.argoproj.io/secret-type: cluster
+          argocd.argoproj.io/secret-type: cluster     
   template: 
     metadata:
-      name: 'cluster-{{name}}-vpa-recommender'
+      name: 'cluster-{{name}}-grafana'
       annotations:
-        argocd.argoproj.io/sync-wave: "3"
+        argocd.argoproj.io/sync-wave: "1"
+      finalizers:
+      - resources-finalizer.argocd.argoproj.io
     spec:
       project: "default"
       sources:
-      - repoURL: https://github.com/sam0787/demo-namespaces-as-a-service.git
-        targetRevision: feature/resource-optimiser
-        path: helm-charts/vpa
+      - chart: grafana
+        repoURL: https://grafana.github.io/helm-charts
+        targetRevision: 8.4.1
         helm:
+          releaseName: grafana
           valueFiles:
-            - $values/helm-values/vpa-values.yaml
+          - $values/helm-values/grafana-values.yaml
+          valuesObject:
+             kyverno.fullname: grafana
       - repoURL: https://github.com/sam0787/demo-namespaces-as-a-service.git
         targetRevision: feature/resource-optimiser
         ref: values
-      - repoURL: https://github.com/nirmata/demo-resource-optimizer.git
-        targetRevision: HEAD
-        path: config/kyverno/policies/
       destination:
         server: '{{server}}'
+        namespace: monitoring
       syncPolicy:
         syncOptions:
         - Replace=true
         - CreateNamespace=true
         automated:
           selfHeal: true
+          prune: true
         retry:
           limit: 30
           backoff:

@@ -1,0 +1,9 @@
+dependencies:
+- name: metrics-server
+  repository: https://kubernetes-sigs.github.io/metrics-server/
+  version: 3.11.0
+- name: kube-state-metrics
+  repository: https://prometheus-community.github.io/helm-charts
+  version: 5.25.1
+digest: sha256:02f9ca7dda19ccb8539ff9bfd9f7841f25541ed29b39ccf11e230275a19bf53a
+generated: "2024-08-07T19:02:11.752341+05:30"

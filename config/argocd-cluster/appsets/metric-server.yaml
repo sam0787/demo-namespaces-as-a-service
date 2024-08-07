@@ -26,6 +26,11 @@ spec:
           releaseName: metric-server
           valuesObject:
              kyverno.fullname: metric-server
+          valueFiles:
+          - $values/helm-values/metric-server-values.yaml
+      - repoURL: https://github.com/sam0787/demo-namespaces-as-a-service.git
+        targetRevision: feature/resource-optimiser
+        ref: values
       destination:
         server: '{{server}}'
         namespace: metric-server
