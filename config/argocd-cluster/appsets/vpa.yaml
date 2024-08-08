@@ -31,6 +31,7 @@ spec:
         path: config/kyverno/policies/
       destination:
         server: '{{server}}'
+        namespace: vpa
       syncPolicy:
         syncOptions:
         - Replace=true
