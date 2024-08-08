@@ -56,7 +56,7 @@ recommender:
     pod-recommendation-min-cpu-millicores: 15
     pod-recommendation-min-memory-mb: 100
     storage: prometheus
-    prometheus-address: http://prometheus-server.default.svc.cluster.local:80
+    prometheus-address: http://prometheus-server.monitoring.svc.cluster.local:80
   replicaCount: 1
   # recommender.revisionHistoryLimit -- The number of old replicasets to retain, default is 10, 0 will garbage-collect old replicasets
   revisionHistoryLimit: 10
