@@ -124,6 +124,14 @@ recommender:
     annotations: {}
     labels: {}
 
+updater:
+  # updater.enabled -- If true, the updater component will be deployed
+  enabled: false
+  
+admissionController:
+  # admissionController.enabled -- If true, will install the admission-controller component of vpa
+  enabled: false
+
 tests:
   # tests.securityContext -- The security context for the containers run as helm hook tests
   securityContext:
