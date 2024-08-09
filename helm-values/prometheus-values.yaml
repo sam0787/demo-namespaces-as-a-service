@@ -1328,7 +1328,7 @@ kube-state-metrics:
                   resource: "cpu"
                   unit: "core"
   selfMonitor:
-    enabled: true
+    enabled: false
 
 ## prometheus-node-exporter sub-chart configurable values
 ## Please see https://github.com/prometheus-community/helm-charts/tree/main/charts/prometheus-node-exporter
