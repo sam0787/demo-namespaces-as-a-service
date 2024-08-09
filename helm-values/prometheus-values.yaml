@@ -92,7 +92,12 @@ configmapReload:
       #   readOnly: true
 
     ## Security context to be added to configmap-reload container
-    containerSecurityContext: {}
+    containerSecurityContext:
+      readOnlyRootFilesystem: true
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
 
     ## Settings for Prometheus reloader's readiness, liveness and startup probes
     ## Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
@@ -689,14 +694,19 @@ server:
   ## Security context to be added to server pods
   ##
   securityContext:
-    runAsUser: 65534
     runAsNonRoot: true
-    runAsGroup: 65534
-    fsGroup: 65534
+    runAsUser: 65534
+    seccompProfile:
+      type: RuntimeDefault
 
   ## Security context to be added to server container
   ##
-  containerSecurityContext: {}
+  containerSecurityContext:
+    readOnlyRootFilesystem: true
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
 
   service:
     ## If false, no Service will be created for the Prometheus server
@@ -1264,10 +1274,11 @@ alertmanager:
     size: 2Gi
 
   podSecurityContext:
-    runAsUser: 65534
     runAsNonRoot: true
-    runAsGroup: 65534
-    fsGroup: 65534
+    runAsUser: 65534
+    seccompProfile:
+      type: RuntimeDefault
+    
 
 ## kube-state-metrics sub-chart configurable values
 ## Please see https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics
@@ -1342,7 +1353,11 @@ prometheus-node-exporter:
     pspEnabled: false
 
   containerSecurityContext:
+    readOnlyRootFilesystem: true
     allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
 
 ## prometheus-pushgateway sub-chart configurable values
 ## Please see https://github.com/prometheus-community/helm-charts/tree/main/charts/prometheus-pushgateway
