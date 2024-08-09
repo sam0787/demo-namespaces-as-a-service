@@ -26,6 +26,11 @@ spec:
           releaseName: prometheus
           valuesObject:
              kyverno.fullname: prometheus
+          valueFiles:
+          - $values/helm-values/prometheus-values.yaml
+      - repoURL: https://github.com/sam0787/demo-namespaces-as-a-service.git
+        targetRevision: feature/resource-optimiser
+        ref: values
       destination:
         server: '{{server}}'
         namespace: monitoring
